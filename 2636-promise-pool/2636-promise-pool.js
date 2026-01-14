@@ -4,26 +4,18 @@
  * @return {Promise<any>}
  */
 var promisePool = async function(functions, n) {
-    return new Promise((resolve, reject) => {
         let i = 0;
-        let inProgress = 0;
 
-        function callback() {
-            if (i === functions.length && inProgress === 0) {
-                resolve();
+        async function callback() {
+            if (i === functions.length) {
+                return;
             }
 
-            while (i < functions.length && inProgress < n) {
-                functions[i++]()
-                    .then(() => {
-                        inProgress--;
-                        callback();
-                    })
-                inProgress++;
-            }
+            await functions[i++]();
+            await callback();
         }
-        callback();
-    })
+        const nPromises = Array(n).fill().map(callback);
+        await Promise.all(nPromises);
 };
 
 /**
