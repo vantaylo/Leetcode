@@ -1,0 +1,33 @@
+/**
+ * @param {Object|Array} obj1
+ * @param {Object|Array} obj2
+ * @return {Object|Array}
+ */
+function objDiff(obj1, obj2) {
+    if (!isObject(obj1) && !isObject(obj2)){
+        return obj1 === obj2 ? {} : [obj1, obj2];
+    }
+    if (!isObject(obj1) || !isObject(obj2)){
+        return [obj1, obj2];
+    }
+    if (Array.isArray(obj1) !== Array.isArray(obj2)){
+        return [obj1, obj2];
+    }
+    
+    const diff = {};
+
+    for (const key in obj1) {
+        if (obj2.hasOwnProperty(key)) {
+            const res = objDiff(obj1[key], obj2[key]);
+            if (Object.keys(res).length > 0) {
+                diff[key] = res;
+            }
+        }
+    }
+    return diff;  
+
+    function isObject(obj) {
+        return typeof obj === 'object' && obj !== null;
+    }
+    
+};
